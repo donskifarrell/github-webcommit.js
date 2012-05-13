@@ -1,6 +1,21 @@
-var Github = function() {
+var Github = function(config) {
     var API_URL = 'https://api.github.com';
     var that = this;
+
+    if (config.repositoryRoot === undefined){
+        alert("The GitHub repository root needs to be defined in order to commit to it!");
+    } 
+    else that.repo = config.repositoryRoot;
+
+    if (config.path === undefined){
+        that.path = '';
+    } 
+    else that.path = config.path;
+
+    if (config.defaultCommitMessage === undefined){
+        that.defaultMessage = "Commit by GitHub-WebCommit.js";
+    } 
+    else that.defaultMessage = config.defaultCommitMessage;
 
     this.base64encode = function(string){
         var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
@@ -40,9 +55,9 @@ var Github = function() {
         that.password = password;
     }
 
-    this.commit = function(repo, post) {
+    this.commit = function(post) {
         that.post = post;
-        that.repoPrefix = '/repos/' + repo;
+        that.repoPrefix = '/repos/' + that.repo;
         getApi(that.repoPrefix + '/git/refs/heads/master', null, 'getLatestCommit');
     }
 
@@ -58,7 +73,7 @@ var Github = function() {
             "base_tree": sha_base_tree,
             "tree": [
                 {
-                    "path": "posts/" + that.post.filename,
+                    "path": that.path + that.post.filename,
                     "mode": "100644",
                     "type": "blob",
                     "content": that.post.body
@@ -74,7 +89,7 @@ var Github = function() {
         var tree_sha = response.sha;
         var postData = {
             "tree" : tree_sha,
-            "message": "Commit from Lanyon",
+            "message": that.defaultMessage,
             "parents": [
                 that.sha_latest_commit
             ]
@@ -120,8 +135,8 @@ var Github = function() {
             contentType: 'application/x-www-form-urlencoded',
             success: cb,
             beforeSend : function(xhr) {
-		        xhr.setRequestHeader("Authorization", "Basic " + that.base64encode(user + ':' + pw));
-	        }
+                xhr.setRequestHeader("Authorization", "Basic " + that.base64encode(user + ':' + pw));
+            }
         });
     }
 }
