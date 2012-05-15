@@ -2,20 +2,15 @@ var Github = function(config) {
     var API_URL = 'https://api.github.com';
     var that = this;
 
-    if (config.repositoryRoot === undefined){
-        alert("The GitHub repository root needs to be defined in order to commit to it!");
-    } 
-    else that.repo = config.repositoryRoot;
+    that.repo = (typeof config.repositoryRoot === "undefined") ?
+        alert("The GitHub repository root needs to be defined in order to commit to it!") : 
+        config.repositoryRoot;
 
-    if (config.path === undefined){
-        that.path = '';
-    } 
-    else that.path = config.path;
-
-    if (config.defaultCommitMessage === undefined){
-        that.defaultMessage = "Commit by GitHub-WebCommit.js";
-    } 
-    else that.defaultMessage = config.defaultCommitMessage;
+    that.path = (typeof config.path === "undefined") ? 
+        '' : config.path;
+        
+    that.defaultMessage = (typeof config.defaultCommitMessage === "undefined") ?
+        "Commit by GitHub-WebCommit.js" : config.defaultCommitMessage;
 
     this.base64encode = function(string){
         var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
