@@ -16,7 +16,7 @@ function GitHubWebCommit(){
 			defaultCommitMessage : 'Commit by GitHub-WebCommit.js'
 		});
 
-    gh.setCredentials($usernameField.val(), $passwordField.val());
+    gh.setCredentials($GitHub_Username, $GitHub_Password);
     gh.commit(post);
 }
 ```
@@ -27,3 +27,4 @@ There is always something to do:
 
 * If possible, integrate with GitHub OAuth api to avoid the need of username/password when already logged in.
 * Add simple static page example of committing to a GitHub repo
+* Add minified version of js file
