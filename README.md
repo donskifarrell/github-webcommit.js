@@ -12,7 +12,7 @@ A more detailed explanation on the inner workings can be found at [Mike Swanson'
 function GitHubWebCommit(){
   	gh = new Github({
   			repositoryRoot : 'donskifarrell/github-webcommit.js'
-			defaultPath : '/commit/destination/from/repo/root',
+			defaultCommitPath : '/commit/destination/from/repo/root',
 			defaultCommitMessage : 'Commit by GitHub-WebCommit.js'
 		});
 

@@ -6,8 +6,8 @@ var Github = function(config) {
         alert("The GitHub repository root needs to be defined in order to commit to it!") : 
         config.repositoryRoot;
 
-    that.path = (typeof config.path === "undefined") ? 
-        '' : config.path;
+    that.commitPath = (typeof config.defaultCommitPath === "undefined") ? 
+        '' : config.defaultCommitPath;
         
     that.defaultMessage = (typeof config.defaultCommitMessage === "undefined") ?
         "Commit by GitHub-WebCommit.js" : config.defaultCommitMessage;
@@ -68,7 +68,7 @@ var Github = function(config) {
             "base_tree": sha_base_tree,
             "tree": [
                 {
-                    "path": that.path + that.post.filename,
+                    "path": that.commitPath + that.post.filename,
                     "mode": "100644",
                     "type": "blob",
                     "content": that.post.body
