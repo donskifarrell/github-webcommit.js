@@ -11,7 +11,8 @@ A more detailed explanation on the inner workings can be found at [Mike Swanson'
 ```javascript
 function GitHubWebCommit(){
   	gh = new Github({
-  			repositoryRoot : 'donskifarrell/github-webcommit.js'
+  			repositoryRoot : 'donskifarrell/github-webcommit.js',
+  			branchName : 'master',
 			defaultCommitPath : '/commit/destination/from/repo/root',
 			defaultCommitMessage : 'Commit by GitHub-WebCommit.js'
 		});

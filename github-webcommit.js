@@ -1,12 +1,33 @@
+/*
+ * GitHub-WebCommit.js 0.1.0
+ * 2012 Donal Farrell <www.donalfarrell.com>
+ * MIT license
+ *
+ * Allows a Javascript client to commit a file to a
+ * GitHub repository using their Username/Password credentials.
+ *
+ * Adapted from code by Mark Swanson/Lanyon at https://github.com/swanson/lanyon
+ *
+ * Example parameters:
+ * - repositoryRoot: donskifarrell/donskifarrell.github.com
+ * - branchName: gh-pages
+ * - defaultCommitPath: _posts/
+ * - defaultCommitMessage: Added a new post!
+ *
+*/
 var Github = function(config) {
     var API_URL = 'https://api.github.com';
     var that = this;
 
     that.repo = (typeof config.repositoryRoot === "undefined") ?
-        alert("The GitHub repository root needs to be defined in order to commit to it!") : 
+        alert("The GitHub repository root needs to be defined in order to commit to it!") :
         config.repositoryRoot;
 
-    that.commitPath = (typeof config.defaultCommitPath === "undefined") ? 
+    that.branchName = (typeof config.branchName === "undefined") ?
+        alert("The GitHub repository branch name needs to be defined in order to commit to it! Normally this is just 'master'") :
+        config.branchName;
+
+    that.commitPath = (typeof config.defaultCommitPath === "undefined") ?
         '' : config.defaultCommitPath;
         
     that.defaultMessage = (typeof config.defaultCommitMessage === "undefined") ?
@@ -37,30 +58,29 @@ var Github = function(config) {
                 b4 = 64;
             }
 
-            result += characters.charAt( b1 ) + characters.charAt( b2 ) + 
+            result += characters.charAt( b1 ) + characters.charAt( b2 ) +
                 characters.charAt( b3 ) + characters.charAt( b4 );
 
         } while ( i < string.length );
 
         return result;
-    }
+    };
 
     this.setCredentials = function(username, password) {
         that.username = username;
         that.password = password;
-    }
+    };
 
     this.commit = function(post) {
         that.post = post;
         that.repoPrefix = '/repos/' + that.repo;
-        getApi(that.repoPrefix + '/git/refs/heads/master', null, 'getLatestCommit');
-    }
+        getApi(that.repoPrefix + '/git/refs/heads/' + that.branchName, null, 'getLatestCommit');
+    };
 
     getLatestCommit = function(response) {
         that.sha_latest_commit = response.data.object.sha;
-        getApi(that.repoPrefix + '/git/commits/' + that.sha_latest_commit, null,
-                'getLatestTree');
-    }
+        getApi(that.repoPrefix + '/git/commits/' + that.sha_latest_commit, null, 'getLatestTree');
+    };
 
     getLatestTree = function(response) {
         var sha_base_tree = response.data.tree.sha;
@@ -76,9 +96,9 @@ var Github = function(config) {
             ]
         };
 
-        postApi(that.repoPrefix + '/git/trees', postData, buildTree, 
+        postApi(that.repoPrefix + '/git/trees', postData, buildTree,
                 that.username, that.password);
-    }
+    };
 
     buildTree = function(response) {
         var tree_sha = response.sha;
@@ -92,21 +112,21 @@ var Github = function(config) {
 
         postApi(that.repoPrefix + '/git/commits', postData, buildCommit,
                 that.username, that.password);
-    }
+    };
 
     buildCommit = function(response) {
         var commit_sha = response.sha;
         var postData = {
             "sha": commit_sha
-        }
+        };
 
-        postApi(that.repoPrefix + '/git/refs/heads/master', postData, commitSuccess,
+        postApi(that.repoPrefix + '/git/refs/heads/' + that.branchName, postData, commitSuccess,
                 that.username, that.password);
-    }
+    };
 
     commitSuccess = function(response) {
         alert(response.url);
-    }
+    };
 
     getApi = function(route, data, cb){
         $.ajax({
@@ -119,7 +139,7 @@ var Github = function(config) {
             data: JSON.stringify(data),
             jsonpCallback: cb
         });
-    }
+    };
 
     postApi = function(route, data, cb, user, pw) {
         $.ajax({
@@ -133,5 +153,5 @@ var Github = function(config) {
                 xhr.setRequestHeader("Authorization", "Basic " + that.base64encode(user + ':' + pw));
             }
         });
-    }
-}
+    };
+};
